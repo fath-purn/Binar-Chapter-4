@@ -10,16 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  name String
-  post Post[]
+model Users {
+  id           Int             @id @default(autoincrement())
+  name         String
+  email        String          @unique
+  password     String
+  bankAccounts Bank_accounts[]
+  profiles     Profiles[]
 }
 
-model Post {
-  id Int @id @default(autoincrement())
-  title String
-  publised Boolean @default(true)
-  authorId Int
-  author User @relation(fields: [authorId], references: [id])
+model Bank_accounts {
+  id                    Int           @id @default(autoincrement())
+  user                  Users          @relation(fields: [user_id], references: [id])
+  user_id               Int
+  bank_name             String
+  bank_account_number   String
+  balance               Int
+  transactions          Transaction[] @relation("SourceAccount")
+  received_transactions Transaction[] @relation("DestinationAccount")
+}
+
+model Profiles {
+  id              Int    @id @default(autoincrement())
+  user            Users   @relation(fields: [user_id], references: [id])
+  user_id         Int
+  identity_type   String
+  identity_number String
+  address         String
+}
+
+model Transaction {
+  id                     Int           @id @default(autoincrement())
+  source_account         Bank_accounts @relation("SourceAccount", fields: [source_account_id], references: [id])
+  destination_account    Bank_accounts @relation("DestinationAccount", fields: [destination_account_id], references: [id])
+  source_account_id      Int
+  destination_account_id Int
+  amount                 Int
 }
