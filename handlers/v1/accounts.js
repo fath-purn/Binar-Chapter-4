@@ -52,30 +52,30 @@ module.exports = {
   },
   getAccountById: async (req, res, next) => {
     try {
-        let { id } = req.params;
-        id = Number(id);
+      let { id } = req.params;
+      id = Number(id);
 
-        const account = await prisma.bank_accounts.findUnique({
-            where: {
-                id,
-            },
+      const account = await prisma.bank_accounts.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!account) {
+        return res.status(400).json({
+          status: false,
+          message: "Account not found",
+          data: null,
         });
+      }
 
-        if (!account) {
-            return res.status(400).json({
-                status: false,
-                message: "Account not found",
-                data: null,
-            });
-        }
-
-        res.status(200).json({
-            status: true,
-            message: "Success",
-            data: account,
-        });
+      res.status(200).json({
+        status: true,
+        message: "Success",
+        data: account,
+      });
     } catch (error) {
-        next(error);
+      next(error);
     }
   },
 };

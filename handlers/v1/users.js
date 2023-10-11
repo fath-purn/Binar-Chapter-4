@@ -88,6 +88,18 @@ module.exports = {
         where: {
           id: Number(id),
         },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          profiles: {
+            select: {
+              identity_type: true,
+              identity_number: true,
+              address: true,
+            },
+          },
+        },
       });
 
       if (!user) {
@@ -107,5 +119,4 @@ module.exports = {
       next(error);
     }
   },
-
 };

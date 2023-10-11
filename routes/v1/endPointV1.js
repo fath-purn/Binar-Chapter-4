@@ -2,7 +2,7 @@ const express = require('express');
 const route = express.Router();
 const {createUsers, getAllUsers, getUserById} = require('../../handlers/v1/users');
 const {createAccount, getAllAccount, getAccountById} = require('../../handlers/v1/accounts');
-
+const {createTransactions, getAllTransactions, getTransactionsById} = require('../../handlers/v1/transactions');
 
 
 route.get('/', (req, res) => {
@@ -13,14 +13,20 @@ route.get('/', (req, res) => {
     })
 });
 
-route.post('/user', createUsers);
+// users
+route.post('/users', createUsers);
 route.get('/users', getAllUsers);
-route.get("/user/:id", getUserById);
-
+route.get("/users/:id", getUserById);
 
 // account
-route.post('/account', createAccount);
+route.post('/accounts', createAccount);
 route.get('/accounts', getAllAccount);
-route.get("/account/:id", getAccountById);
+route.get("/accounts/:id", getAccountById);
+
+
+// transactions
+route.post('/transactions', createTransactions);
+route.get('/transactions', getAllTransactions);
+route.get("/transactions/:id", getTransactionsById);
 
 module.exports = route;
