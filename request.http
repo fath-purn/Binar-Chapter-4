@@ -8,10 +8,10 @@ GET  http://localhost:3000/api/v1/users
 GET  http://localhost:3000/api/v1/users?limit=5&page=4
 
 ###
-GET http://localhost:3000/api/v1/user/3
+GET http://localhost:3000/api/v1/users/10
 
 ###
-POST http://localhost:3000/api/v1/user
+POST http://localhost:3000/api/v1/users
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 
 ### Account
-POST http://localhost:3000/api/v1/account
+POST http://localhost:3000/api/v1/accounts
 Content-Type: application/json
 
 {
@@ -36,4 +36,22 @@ Content-Type: application/json
 GET http://localhost:3000/api/v1/accounts?limit=5&page=2
 
 ###
-GET http://localhost:3000/api/v1/account/1
+GET http://localhost:3000/api/v1/accounts/1
+
+
+### Transaction
+POST http://localhost:3000/api/v1/transactions
+Content-Type: application/json
+
+{
+    "source_account_id": 4,
+    "destination_account_id": 1,
+    "amount": 100
+}
+
+###
+GET http://localhost:3000/api/v1/transactions?limit=5&page=1
+
+###
+GET http://localhost:3000/api/v1/transactions/10
+
