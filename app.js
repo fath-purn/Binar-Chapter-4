@@ -18,6 +18,25 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1", v1Router);
 
+// 404 error handling
+app.use((req, res, next) => {
+  res.status(404).json({
+      status: false,
+      message: 'Not Found',
+      data: null
+  });
+});
+
+// 500 error handling
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500).json({
+      status: false,
+      message: 'Internal Server Error',
+      data: err.message
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

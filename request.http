@@ -5,10 +5,13 @@ GET http://localhost:3000/
 GET  http://localhost:3000/api/v1/users
 
 ### 
-GET  http://localhost:3000/api/v1/users?limit=5&page=2
+GET  http://localhost:3000/api/v1/users?limit=5&page=4
 
 ###
-POST http://localhost:3000/api/v1/users
+GET http://localhost:3000/api/v1/user/3
+
+###
+POST http://localhost:3000/api/v1/user
 Content-Type: application/json
 
 {
@@ -17,3 +20,20 @@ Content-Type: application/json
     "password": "asd@fsdf123"
 } 
 
+
+### Account
+POST http://localhost:3000/api/v1/account
+Content-Type: application/json
+
+{
+    "user_id": 20,
+    "bank_name": "testaasdfdlsd",
+    "bank_account_number": "1234567890",
+    "balance": 50000
+}
+
+### 
+GET http://localhost:3000/api/v1/accounts?limit=5&page=2
+
+###
+GET http://localhost:3000/api/v1/account/1
