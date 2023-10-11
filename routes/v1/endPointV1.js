@@ -1,6 +1,6 @@
 const express = require('express');
 const route = express.Router();
-const {createUsers, getAllUsers} = require('../../handlers/v1/users');
+const {createUsers, getAllUsers, getUserById} = require('../../handlers/v1/users');
 
 route.get('/', (req, res) => {
     res.status(200).json({
@@ -12,6 +12,7 @@ route.get('/', (req, res) => {
 
 route.post('/users', createUsers);
 route.get('/users', getAllUsers);
+route.get("/users/:id", getUserById);
 
 
 module.exports = route;
