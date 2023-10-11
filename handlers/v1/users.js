@@ -52,7 +52,7 @@ module.exports = {
   // menampilkan daftar user
   getAllUsers: async (req, res, next) => {
     try {
-      let { page = 1, limit = 5 } = req.query;
+      let { page = 1, limit = 10 } = req.query;
       page = Number(page);
       limit = Number(limit);
 
