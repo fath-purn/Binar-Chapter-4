@@ -4,35 +4,68 @@ const { getPagination } = require("../../helpers/pagination");
 
 module.exports = {
   // membuat transaksi
-  createTransactions: async (req, res, next) => {
+  createTransactions: async(req, res, next) => {
     try {
       let { source_account_id, destination_account_id, amount } = req.body;
+  
+      // if(!source_account_id || !destination_account_id || !amount) {
+      //   return res.status(400).json({
+      //     status: false,
+      //     message: "All field must be filled",
+      //     data: null,
+      //   });
+      // }
 
-      if (source_account_id === destination_account_id) {
-        return res.status(400).json({
-          status: false,
-          message: "Account id cannot be the same",
-          data: null,
-        });
-      }
-
-      // Mendapatkan informasi saldo uang asal
-      let sourceAccount = await prisma.bank_accounts.findUnique({
+      // Validasi source_account_id dan destination_account_id
+      const sourceAccount = await prisma.bank_accounts.findUnique({
         where: {
           id: source_account_id,
         },
       });
-
-      // Memeriksa apakah saldo uang asal mencukupi
-      if (sourceAccount.balance < amount) {
+  
+      if (!sourceAccount) {
         return res.status(400).json({
           status: false,
-          message: "Insufficient balance",
-          data: null,
+          message: "Source account tidak ditemukan",
         });
       }
-
-      // Mengurangi saldo uang asal
+  
+      const destinationAccount = await prisma.bank_accounts.findUnique({
+        where: {
+          id: destination_account_id,
+        },
+      });
+  
+      if (!destinationAccount) {
+        return res.status(400).json({
+          status: false,
+          message: "Destination account tidak ditemukan",
+        });
+      }
+  
+      // Validasi amount
+      if (amount <= 0) {
+        return res.status(400).json({
+          status: false,
+          message: "Amount tidak valid",
+        });
+      }
+  
+      // Validasi apakah pengguna memiliki otorisasi untuk melakukan transaksi dari rekening bank asal
+      const user = await prisma.users.findUnique({
+        where: {
+          id: sourceAccount.user_id,
+        },
+      });
+  
+      if (user.id !== sourceAccount.user_id) {
+        return res.status(400).json({
+          status: false,
+          message: "Pengguna tidak memiliki otorisasi untuk melakukan transaksi dari rekening bank asal",
+        });
+      }
+  
+      // Jika semua validasi berhasil, maka lakukan transaksi
       await prisma.bank_accounts.update({
         where: {
           id: source_account_id,
@@ -41,8 +74,7 @@ module.exports = {
           balance: sourceAccount.balance - amount,
         },
       });
-
-      // Menambah saldo uang tujuan
+  
       await prisma.bank_accounts.update({
         where: {
           id: destination_account_id,
@@ -53,8 +85,7 @@ module.exports = {
           },
         },
       });
-
-      // Mencatat hasil transaksi
+  
       let transaction = await prisma.transaction.create({
         data: {
           source_account_id,
@@ -62,7 +93,7 @@ module.exports = {
           amount,
         },
       });
-
+  
       return res.status(201).json({
         status: true,
         message: "Success Create Transactions",

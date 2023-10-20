@@ -1,15 +1,28 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET_KEY } = process.env;
 const { getPagination } = require("../../helpers/pagination");
 
 module.exports = {
-  createUsers: async (req, res, next) => {
+  register: async (req, res, next) => {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, password_confirmation } = req.body;
+      if (password != password_confirmation) {
+        return res.status(400).json({
+          status: false,
+          message: "Bad Request",
+          err: "please ensure that the password and password confirmation match!",
+          data: null,
+        });
+      }
+
       // Untuk mengecek data yang dikirim harus sesuai
       if (!name || !email || !password) {
         return res.status(400).json({
           status: false,
+          message: "Bad Request",
           message: "All field must be filled",
           data: null,
         });
@@ -26,27 +39,85 @@ module.exports = {
       if (user) {
         return res.status(400).json({
           status: false,
+          message: "Bad Request",
           message: "Email already exist",
           data: null,
         });
       }
 
-      // Jika email belum terdaftar, maka akan membuat user baru
-      const newUser = await prisma.users.create({
+      let encryptedPassword = await bcrypt.hash(password, 10);
+      let newUser = await prisma.users.create({
         data: {
           name,
           email,
-          password,
+          password: encryptedPassword,
         },
       });
+
       res.status(200).json({
         status: true,
+        message: "Created",
         message: "Success",
         data: newUser,
       });
     } catch (error) {
       next(error);
     }
+  },
+
+  login: async (req, res, next) => {
+    try {
+      let { email, password } = req.body;
+
+      let user = await prisma.users.findUnique({ where: { email } });
+      if (!user) {
+        return res.status(400).json({
+          status: false,
+          message: "Bad Request",
+          err: "invalid email or password!",
+          data: null,
+        });
+      }
+
+      let isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        return res.status(400).json({
+          status: false,
+          message: "Bad Request",
+          err: "invalid email or password!",
+          data: null,
+        });
+      }
+
+      if (!JWT_SECRET_KEY) {
+        return res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+          err: "JWT_SECRET_KEY is not defined!",
+          data: null,
+        });
+      }
+
+      let token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
+
+      return res.status(200).json({
+        status: true,
+        message: "OK",
+        err: null,
+        data: { user, token },
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  authenticate: (req, res, next) => {
+    return res.status(200).json({
+      status: true,
+      message: "OK",
+      err: null,
+      data: { user: req.user },
+    });
   },
 
   // menampilkan daftar user

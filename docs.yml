@@ -10,7 +10,7 @@ paths:
   /users:
     get:
       tags:
-        - user
+        - User
       summary: Get all users
       description: Returns all users from the system that the user has access to
       operationId: getUsers
@@ -34,84 +34,31 @@ paths:
             minimum: 1
             default: 10
       responses:
-        '200':
-          description: successful operation
+        "200":
+          description: Successful operation
           content:
             application/json:
-              schema: 
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Success"
-                  data: 
-                    type: object
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
                     properties:
-                      pagination: 
+                      data:
                         type: object
                         properties:
-                          links: 
-                            type: object
-                            properties:
-                              next: 
-                                type: string
-                                example: http://localhost:3000/api/v1/users?page=2&limit=10
-                              prev: 
-                                type: string
-                                example: http://localhost:3000/api/v1/users?page=1&limit=10
-                          total_items:
-                            type: integer
-                            example: 100
-                          dataUsers:
+                          pagination:
+                            $ref: "#/components/schemas/Pagination"
+                          dataAccount:
                             type: array
                             items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  example: 1
-                                name:
-                                  type: string
-                                  example: "John Doe"
-                                email:
-                                  type: string
-                                  example: mail@mail.com
+                              $ref: "#/components/schemas/Data"
+                                
         '400':
-          description: Invalid status value                      
-  
-    post:
-      tags:
-        - user
-      summary: Add a new user to the store
-      operationId: addUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  default: "John Doe"
-                email:
-                  type: string
-                  default: "mail@mail.com"
-                password:
-                  type: string
-                  default: "123456"
-      responses:
-        '201':
-          description: Created
-        '405':
-          description: Invalid input
+          description: Invalid status value
   /users/{usersId}:
     get:
       tags:
-        - user
+        - User
       summary: Get users by Id
       description: Returns all users and profile from the system that the user has access to by Id 
       operationId: getUsersById
@@ -128,43 +75,329 @@ paths:
           description: successful operation
           content:
             application/json:
-              schema: 
-                type: object
-                properties:
-                  status:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Success"
-                  data: 
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      name:
-                        type: string
-                        example: "John Doe"
-                      email:
-                        type: string
-                        example: mail@mail.com
-                      profile:
-                        type: array
-                        items: 
-                          type: object
-                          properties:
-                            identity_type:
-                              type: string
-                              example: "KTP"
-                            identity_number:
-                              type: string
-                              example: "1234567890"
-                            address:
-                              type: string
-                              example: "Jl. Jalan"
+              schema:
+                allOf:
+                - $ref: "#/components/schemas/BasicResponse"
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        user:
+                          $ref: "#/components/schemas/Data"
+                        profile:
+                          $ref: "#/components/schemas/Profile"
+
                       
         '400':
           description: Invalid status value  
+          
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Add a new user to the store
+      operationId: post-auth-register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  default: "John Doe"
+                email:
+                  type: string
+                  default: "mail@mail.com"
+                password:
+                  type: string
+                  default: "123456"
+                password_confirmation:
+                  type: string
+                  default: "123456"
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login to get token
+      operationId: post-auth-login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  default: "ab@mail.com"
+                password:
+                  type: string
+                  default: "asd@fsdf123"
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+  /auth/authenticate:
+    get:
+      tags:
+        - Auth
+      summary: Authenticate to get token
+      operationId: post-auth-authenticate
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "John Doe"
+                              email:
+                                type: string
+                                example: "mail@mail.com"
+                              password:
+                                type: string
+                                example: "$2b$10$8a0.."
+                              token:
+                                type: string
+                                example: "$2b$10$8a0.."
+                            
+                          
+      security:
+        - bearerAuth: []
 
-                  
+  /account:
+    post:
+      tags:
+        - Account
+      summary: Add a new account to the bank
+      operationId: post-account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  default: 3
+                bank_name:
+                  type: string
+                  default: "Bank Purno"
+                bank_account_number:
+                  type: string
+                  default: "1234567890"
+                balance:
+                  type: integer
+                  default: 1000000
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+
+
+
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Get all accounts
+      description: Returns all accounts from the system that the user has access to
+      operationId: getAccounts
+      parameters:
+        - name: page
+          in: query
+          required: true
+          description: Get accounts by page
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: true
+          description: Get accounts by limit
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            $ref: "#/components/schemas/Pagination"
+                          dataAccount:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                user_id:
+                                  type: integer
+                                  example: 1
+                                bank_name:
+                                  type: string
+                                  example: "Bank Purno"
+                                bank_account_number:
+                                  type: string
+                                  example: "1234567890"
+                                balance:
+                                  type: integer
+                                  example: 1000000
+                                
+        '400':
+          description: Invalid status value
+  /accounts/{accountId}:
+    get:
+      tags:
+        - Account
+      summary: Get accounts by Id
+      description: Returns all accounts from the system that the user has access to by Id
+      operationId: getAccountsById
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: Get Account By Id
+          schema:
+            type : integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: "#/components/schemas/BasicResponse"
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        account:
+                          $ref: "#/components/schemas/DataAccount"
+
+                            
+        '400':
+          description: Invalid status value
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    BasicResponse:
+        title: BasicResponse
+        type: object
+        properties:
+          status:
+            type: boolean
+            example: true
+          message:
+            type: string
+            example: "success"
+          err:
+            type: boolean
+            example: null
+    Pagination:
+      title: Pagination
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            next:
+              type: string
+              example: "https://domain.com/users?page=3&limit=10"
+            prev:
+              type: string
+              example: "https://domain.com/users?page=1&limit=10"
+        total_items:
+          type: integer
+          example: 100
+    Data:
+      title: Data
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "mail@mail.com"
+    Profile:
+      title: Profile
+      type: object
+      properties:
+        identity_type:
+          type: string
+          example: "KTP"
+        identity_number:
+          type: string
+          example: "1234567890"
+        address:
+          type: string
+          example: "Jl. Jalan"
+    DataAccount:
+      title: DataAccount
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        bank_name:
+          type: string
+          example: "Bank Purno"
+        bank_account_number:
+          type: string
+          example: "1234567890"
+        balance:
+          type: integer
+          example: 1000000

@@ -16,7 +16,7 @@ model Users {
   email        String          @unique
   password     String
   bankAccounts Bank_accounts[]
-  profiles     Profiles[]
+  profiles     Profiles?
 }
 
 model Bank_accounts {
@@ -32,8 +32,8 @@ model Bank_accounts {
 
 model Profiles {
   id              Int    @id @default(autoincrement())
-  user            Users   @relation(fields: [user_id], references: [id])
-  user_id         Int
+  user            Users  @relation(fields: [user_id], references: [id])
+  user_id         Int @unique
   identity_type   String
   identity_number String
   address         String
