@@ -1,0 +1,170 @@
+openapi: '3.0.2'
+info:
+  title: Bank Purno
+  description: Bank Purno API dibuat untuk memenuhi tugas di Binar Academy Chapter 4
+  version: '1.0'
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Development server
+paths:
+  /users:
+    get:
+      tags:
+        - user
+      summary: Get all users
+      description: Returns all users from the system that the user has access to
+      operationId: getUsers
+      parameters:
+        - name: page
+          in: query
+          required: true
+          description: Get users by page
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: true
+          description: Get users by limit
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+            default: 10
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success"
+                  data: 
+                    type: object
+                    properties:
+                      pagination: 
+                        type: object
+                        properties:
+                          links: 
+                            type: object
+                            properties:
+                              next: 
+                                type: string
+                                example: http://localhost:3000/api/v1/users?page=2&limit=10
+                              prev: 
+                                type: string
+                                example: http://localhost:3000/api/v1/users?page=1&limit=10
+                          total_items:
+                            type: integer
+                            example: 100
+                          dataUsers:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+                                  example: "John Doe"
+                                email:
+                                  type: string
+                                  example: mail@mail.com
+        '400':
+          description: Invalid status value                      
+  
+    post:
+      tags:
+        - user
+      summary: Add a new user to the store
+      operationId: addUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  default: "John Doe"
+                email:
+                  type: string
+                  default: "mail@mail.com"
+                password:
+                  type: string
+                  default: "123456"
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+  /users/{usersId}:
+    get:
+      tags:
+        - user
+      summary: Get users by Id
+      description: Returns all users and profile from the system that the user has access to by Id 
+      operationId: getUsersById
+      parameters:
+        - name: usersId
+          in: path
+          required: true
+          description: Get User By Id
+          schema:
+            type : integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Success"
+                  data: 
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: mail@mail.com
+                      profile:
+                        type: array
+                        items: 
+                          type: object
+                          properties:
+                            identity_type:
+                              type: string
+                              example: "KTP"
+                            identity_number:
+                              type: string
+                              example: "1234567890"
+                            address:
+                              type: string
+                              example: "Jl. Jalan"
+                      
+        '400':
+          description: Invalid status value  
+
+                  
