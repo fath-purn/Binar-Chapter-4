@@ -5,20 +5,34 @@ GET http://localhost:3000/
 GET  http://localhost:3000/api/v1/users
 
 ### 
-GET  http://localhost:3000/api/v1/users?limit=5&page=4
+GET  http://localhost:3000/api/v1/users?limit=10&page=3
 
 ###
 GET http://localhost:3000/api/v1/users/10
 
 ###
-POST http://localhost:3000/api/v1/users
+POST http://localhost:3000/api/v1/auth/register
 Content-Type: application/json
 
 {
     "name": "test",
-    "email": "mailacbdefghijklmnopq@mail.com",
-    "password": "asd@fsdf123"
+    "email": "ab@mail.com",
+    "password": "asd@fsdf123",
+    "password_confirmation": "asd@fsdf123"
 } 
+
+###
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "ab@mail.com",
+    "password": "asd@fsdf123"
+}
+
+###
+GET http://localhost:3000/api/v1/auth/authenticate
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjUsImlhdCI6MTY5NzgwNjgzMX0.w4azyR3cRiztM2iJ3165yh-_NJL9j3Z6f18H_R9cBV0
 
 
 ### Account
