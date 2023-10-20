@@ -1,8 +1,9 @@
 const express = require('express');
 const route = express.Router();
-const {createUsers, getAllUsers, getUserById} = require('../../handlers/v1/users');
+const {register, login, authenticate, getAllUsers, getUserById} = require('../../handlers/v1/users');
 const {createAccount, getAllAccount, getAccountById} = require('../../handlers/v1/accounts');
 const {createTransactions, getAllTransactions, getTransactionsById} = require('../../handlers/v1/transactions');
+const {restrict} = require('../../middlewares/auth.middlewares');
 
 
 route.get('/', (req, res) => {
@@ -14,7 +15,9 @@ route.get('/', (req, res) => {
 });
 
 // users
-route.post('/users', createUsers);
+route.post('/auth/register', register);
+route.post('/auth/login', login);
+route.get('/auth/authenticate', restrict, authenticate);
 route.get('/users', getAllUsers);
 route.get("/users/:id", getUserById);
 

@@ -39,15 +39,6 @@ model Profiles {
   address         String
 }
 
-// model Profiles {
-//   id              Int    @id @default(autoincrement())
-//   user            Users  @relation(fields: [user_id], references: [id])
-//   user_id         Int    @unique
-//   identity_type   String
-//   identity_number String
-//   address         String
-// }
-
 model Transaction {
   id                     Int           @id @default(autoincrement())
   source_account         Bank_accounts @relation("SourceAccount", fields: [source_account_id], references: [id])
