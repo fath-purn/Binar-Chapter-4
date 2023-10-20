@@ -1,0 +1,169 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const app = require("../../app");
+const request = require("supertest");
+
+describe("Transactions API", () => {
+  describe("POST /transactions", () => {
+    it("should create a new transaction", async () => {
+      const sourceAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 1,
+          bank_name: "Bank A",
+          bank_account_number: "1234567890",
+          balance: 1000,
+        },
+      });
+
+      const destinationAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 2,
+          bank_name: "Bank B",
+          bank_account_number: "0987654321",
+          balance: 0,
+        },
+      });
+
+      const res = await request(app)
+        .post("/transactions")
+        .send({
+          source_account_id: sourceAccount.id,
+          destination_account_id: destinationAccount.id,
+          amount: 500,
+        });
+
+      expect(res.statusCode).toEqual(201);
+      expect(res.body.status).toEqual(true);
+      expect(res.body.message).toEqual("Success Create Transactions");
+      expect(res.body.data.source_account_id).toEqual(sourceAccount.id);
+      expect(res.body.data.destination_account_id).toEqual(destinationAccount.id);
+      expect(res.body.data.amount).toEqual(500);
+
+      const updatedSourceAccount = await prisma.bank_accounts.findUnique({
+        where: {
+          id: sourceAccount.id,
+        },
+      });
+
+      const updatedDestinationAccount = await prisma.bank_accounts.findUnique({
+        where: {
+          id: destinationAccount.id,
+        },
+      });
+
+      expect(updatedSourceAccount.balance).toEqual(500);
+      expect(updatedDestinationAccount.balance).toEqual(500);
+    });
+
+    it("should return an error if source account is not found", async () => {
+      const destinationAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 2,
+          bank_name: "Bank B",
+          bank_account_number: "0987654321",
+          balance: 0,
+        },
+      });
+
+      const res = await request(app)
+        .post("/transactions")
+        .send({
+          source_account_id: 999,
+          destination_account_id: destinationAccount.id,
+          amount: 500,
+        });
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.status).toEqual(false);
+      expect(res.body.message).toEqual("Source account tidak ditemukan");
+    });
+
+    it("should return an error if destination account is not found", async () => {
+      const sourceAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 1,
+          bank_name: "Bank A",
+          bank_account_number: "1234567890",
+          balance: 1000,
+        },
+      });
+
+      const res = await request(app)
+        .post("/transactions")
+        .send({
+          source_account_id: sourceAccount.id,
+          destination_account_id: 999,
+          amount: 500,
+        });
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.status).toEqual(false);
+      expect(res.body.message).toEqual("Destination account tidak ditemukan");
+    });
+
+    it("should return an error if amount is not valid", async () => {
+      const sourceAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 1,
+          bank_name: "Bank A",
+          bank_account_number: "1234567890",
+          balance: 1000,
+        },
+      });
+
+      const destinationAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 2,
+          bank_name: "Bank B",
+          bank_account_number: "0987654321",
+          balance: 0,
+        },
+      });
+
+      const res = await request(app)
+        .post("/transactions")
+        .send({
+          source_account_id: sourceAccount.id,
+          destination_account_id: destinationAccount.id,
+          amount: -500,
+        });
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.status).toEqual(false);
+      expect(res.body.message).toEqual("Amount tidak valid");
+    });
+
+    it("should return an error if user does not have authorization to make transaction from source account", async () => {
+      const sourceAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 1,
+          bank_name: "Bank A",
+          bank_account_number: "1234567890",
+          balance: 1000,
+        },
+      });
+
+      const destinationAccount = await prisma.bank_accounts.create({
+        data: {
+          user_id: 2,
+          bank_name: "Bank B",
+          bank_account_number: "0987654321",
+          balance: 0,
+        },
+      });
+
+      const res = await request(app)
+        .post("/transactions")
+        .send({
+          source_account_id: sourceAccount.id,
+          destination_account_id: destinationAccount.id,
+          amount: 500,
+        })
+        .set("Authorization", "Bearer invalid_token");
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.status).toEqual(false);
+      expect(res.body.message).toEqual("Pengguna tidak memiliki otorisasi untuk melakukan transaksi dari rekening bank asal");
+    });
+  });
+});

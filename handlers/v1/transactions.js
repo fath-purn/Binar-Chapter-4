@@ -7,14 +7,6 @@ module.exports = {
   createTransactions: async(req, res, next) => {
     try {
       let { source_account_id, destination_account_id, amount } = req.body;
-  
-      // if(!source_account_id || !destination_account_id || !amount) {
-      //   return res.status(400).json({
-      //     status: false,
-      //     message: "All field must be filled",
-      //     data: null,
-      //   });
-      // }
 
       // Validasi source_account_id dan destination_account_id
       const sourceAccount = await prisma.bank_accounts.findUnique({
