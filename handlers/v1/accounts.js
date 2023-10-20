@@ -7,7 +7,44 @@ module.exports = {
     try {
       const { user_id, bank_name, bank_account_number, balance } = req.body;
 
-      let account = await prisma.bank_accounts.create({
+      // Validasi user_id
+      const user = await prisma.users.findUnique({
+        where: {
+          id: user_id,
+        },
+      });
+
+      if (!user) {
+        return res.status(400).json({
+          status: false,
+          message: "User tidak ditemukan",
+        });
+      }
+
+      // Validasi balance
+      if (balance <= 0) {
+        return res.status(400).json({
+          status: false,
+          message: "Saldo tidak valid",
+        });
+      }
+
+      // Validasi apakah pengguna sudah memiliki rekening bank dengan nomor rekening yang sama
+      const existingBankAccountCount = await prisma.bank_accounts.count({
+        where: {
+          bank_account_number,
+        },
+      });
+
+      if (existingBankAccountCount) {
+        return res.status(400).json({
+          status: false,
+          message:
+            "Pengguna sudah memiliki rekening bank dengan nomor rekening yang sama",
+        });
+      }
+
+      const account = await prisma.bank_accounts.create({
         data: {
           user_id,
           bank_name,
