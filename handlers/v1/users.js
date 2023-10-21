@@ -130,6 +130,11 @@ module.exports = {
       const dataUsers = await prisma.users.findMany({
         skip: (page - 1) * limit,
         take: limit,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
         orderBy: {
           id: "asc",
         },

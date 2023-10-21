@@ -8,13 +8,12 @@ module.exports = {
     try {
       let { source_account_id, destination_account_id, amount } = req.body;
   
-      // if(!source_account_id || !destination_account_id || !amount) {
-      //   return res.status(400).json({
-      //     status: false,
-      //     message: "All field must be filled",
-      //     data: null,
-      //   });
-      // }
+      if(source_account_id === destination_account_id) { 
+        return res.status(400).json({
+          status: false,
+          message: "Source account dan destination account tidak boleh sama",
+        });
+      }
 
       // Validasi source_account_id dan destination_account_id
       const sourceAccount = await prisma.bank_accounts.findUnique({
