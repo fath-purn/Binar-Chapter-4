@@ -2,7 +2,7 @@ openapi: '3.0.2'
 info:
   title: Bank Purno
   description: Bank Purno API dibuat untuk memenuhi tugas di Binar Academy Chapter 4
-  version: '1.0'
+  version: '1.0.0'
 servers:
   - url: http://localhost:3000/api/v1
     description: Development server
@@ -265,23 +265,7 @@ paths:
                           dataAccount:
                             type: array
                             items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  example: 1
-                                user_id:
-                                  type: integer
-                                  example: 1
-                                bank_name:
-                                  type: string
-                                  example: "Bank Purno"
-                                bank_account_number:
-                                  type: string
-                                  example: "1234567890"
-                                balance:
-                                  type: integer
-                                  example: 1000000
+                              $ref: "#/components/schemas/DataAccount"
                                 
         '400':
           description: Invalid status value
@@ -315,10 +299,122 @@ paths:
                       properties:
                         account:
                           $ref: "#/components/schemas/DataAccount"
-
-                            
         '400':
           description: Invalid status value
+  
+  /transaction:
+    post:
+      tags:
+        - Transaction
+      summary: Add a new transaction to the bank
+      operationId: post-transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_account_id:
+                  type: integer
+                  default: 1
+                destination_account_id:
+                  type: integer
+                  default: 2
+                amount:
+                  type: integer
+                  default: 1000
+      responses:
+        '201':
+          description: Created
+        '405':
+          description: Invalid input
+
+  /transactions:
+    get:
+      tags:
+        - Transaction
+      summary: Get all transactions
+      description: Returns all transactions from the system that the user has access to
+      operationId: getTransactions
+      parameters:
+        - name: page
+          in: query
+          required: true
+          description: Get transactions by page
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: true
+          description: Get transactions by limit
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+            default: 10
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            $ref: "#/components/schemas/Pagination"
+                          dataTransactions:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/DataTransactions"
+        '400':
+          description: Invalid status value
+  
+  /transactions/{transactionId}:
+    get:
+      tags:
+        - Transaction
+      summary: Get transactions by Id
+      description: Returns all transactions from the system that the user has access to by Id
+      operationId: getTransactionsById
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: Get Transaction By Id
+          schema:
+            type : integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: "#/components/schemas/BasicResponse"
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        transaction:
+                          $ref: "#/components/schemas/DataTransactions"
+                        source_account_id:
+                          $ref: "#/components/schemas/DataTransactionsAndProfile"
+                        destination_account_id:
+                          $ref: "#/components/schemas/DataTransactionsAndProfile"
+        '400':
+          description: Invalid status value
+
 
 components:
   securitySchemes:
@@ -337,9 +433,6 @@ components:
           message:
             type: string
             example: "success"
-          err:
-            type: boolean
-            example: null
     Pagination:
       title: Pagination
       type: object
@@ -401,3 +494,48 @@ components:
         balance:
           type: integer
           example: 1000000
+    DataTransactions:
+      title: DataTransactions
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        source_account_id:
+          type: integer
+          example: 1
+        destination_account_id:
+          type: integer
+          example: 2
+        amount:
+          type: integer
+          example: 1000
+    DataTransactionsAndProfile:
+      title: DataTransactionsAndProfile
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        user_id:
+          type: integer
+          example: 6
+        bank_name:
+          type: string
+          example: "testa"
+        bank_account_number:
+          type: string
+          example: "1234567890"
+        balance:
+          type: integer
+          example: 50000
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "test"
+            email:
+              type: string
+              example: "mail@mail.com"
+
