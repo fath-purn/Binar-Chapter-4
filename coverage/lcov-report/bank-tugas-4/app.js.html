@@ -23,26 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-<<<<<<< Updated upstream
-                <span class="strong">61.36% </span>
-                <span class="quiet">Statements</span>
-                <span class='fraction'>27/44</span>
-=======
                 <span class="strong">66.66% </span>
                 <span class="quiet">Statements</span>
                 <span class='fraction'>32/48</span>
->>>>>>> Stashed changes
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-<<<<<<< Updated upstream
-                <span class='fraction'>0/0</span>
-=======
                 <span class='fraction'>1/1</span>
->>>>>>> Stashed changes
             </div>
         
             
@@ -54,15 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-<<<<<<< Updated upstream
-                <span class="strong">61.36% </span>
-                <span class="quiet">Lines</span>
-                <span class='fraction'>27/44</span>
-=======
                 <span class="strong">66.66% </span>
                 <span class="quiet">Lines</span>
                 <span class='fraction'>32/48</span>
->>>>>>> Stashed changes
             </div>
         
             
@@ -123,7 +107,10 @@
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -132,15 +119,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -156,6 +134,17 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -165,24 +154,20 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<<<<<<< Updated upstream
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">require("dotenv").config();
-=======
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">require("dotenv").config();
->>>>>>> Stashed changes
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const morgan = require('morgan');
 const { PORT = 3000 } = process.env;
 &nbsp;
 const v1Router = require("./routes/v1/endPointV1");
 &nbsp;
 const app = express();
+app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 &nbsp;
@@ -216,20 +201,17 @@ app.use((err, req, res, next) =&gt; {
 });
 &nbsp;
 app.listen(PORT, () =&gt; {
-<span class="cstat-no" title="statement not covered" >  console.log(`Listening on port ${PORT}`);</span>
+  console.log(`Listening on port ${PORT}`);
 });
-&nbsp;</pre></td></tr></table></pre>
+&nbsp;
+module.exports = app;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-<<<<<<< Updated upstream
-                at 2023-10-20T13:40:11.512Z
-=======
-                at 2023-10-22T10:30:18.058Z
->>>>>>> Stashed changes
+                at 2023-10-22T11:17:01.713Z
             </div>
         <script src="../prettify.js"></script>
         <script>

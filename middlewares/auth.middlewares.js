@@ -6,6 +6,7 @@ const { JWT_SECRET_KEY } = process.env;
 module.exports = {
     restrict: (req, res, next) => {
         let { authorization } = req.headers;
+
         if (!authorization) {
             return res.status(401).json({
                 status: false,
@@ -14,6 +15,9 @@ module.exports = {
                 data: null
             });
         }
+
+        authorization = authorization.replace('Bearer ', '');
+        console.log(authorization);
 
         jwt.verify(authorization, JWT_SECRET_KEY, async (err, decoded) => {
             if (err) {

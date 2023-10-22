@@ -22,13 +22,13 @@ route.get('/users', getAllUsers);
 route.get("/users/:id", getUserById);
 
 // account
-route.post('/accounts', createAccount);
+route.post('/account', createAccount);
 route.get('/accounts', getAllAccount);
 route.get("/accounts/:id", getAccountById);
 
 
 // transactions
-route.post('/transactions', createTransactions);
+route.post('/transaction', createTransactions);
 route.get('/transactions', getAllTransactions);
 route.get("/transactions/:id", getTransactionsById);
 
