@@ -132,11 +132,7 @@ module.exports = {
           data: account,
         });
       } catch (err) {
-        res.status(400).json({
-          status: false,
-          message: err.message,
-          data: null,
-        });
+        next(err);
       }
     } catch (err) {
       next(err);
