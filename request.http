@@ -40,7 +40,11 @@ POST http://localhost:3000/api/v1/accounts
 Content-Type: application/json
 
 {
+<<<<<<< Updated upstream
     "user_id": 20,
+=======
+    "user_id": 665,
+>>>>>>> Stashed changes
     "bank_name": "testaasdfdlsd",
     "bank_account_number": "1234567890",
     "balance": 0
@@ -58,9 +62,15 @@ POST http://localhost:3000/api/v1/transactions
 Content-Type: application/json
 
 {
+<<<<<<< Updated upstream
     "source_account_id": ,
     "destination_account_id": 1,
     "amount": 100
+=======
+    "source_account_id": 1,
+    "destination_account_id": 4,
+    "amount": 100 
+>>>>>>> Stashed changes
 }
 
 ###
