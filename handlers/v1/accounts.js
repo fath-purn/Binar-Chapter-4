@@ -17,7 +17,8 @@ module.exports = {
       if (!user) {
         return res.status(400).json({
           status: false,
-          message: "User tidak ditemukan",
+          message: "User tidak ditemukan", 
+          data: null,
         });
       }
 
@@ -26,6 +27,7 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Saldo tidak valid",
+          data: null,
         });
       }
 
@@ -41,6 +43,7 @@ module.exports = {
           status: false,
           message:
             "Pengguna sudah memiliki rekening bank dengan nomor rekening yang sama",
+          data: null,
         });
       }
 
@@ -67,7 +70,7 @@ module.exports = {
       page = Number(page);
       limit = Number(limit);
 
-      const dataAccount = await prisma.bank_accounts.findMany({
+      const dataAccounts = await prisma.bank_accounts.findMany({
         skip: (page - 1) * limit,
         take: limit,
       });
@@ -81,7 +84,7 @@ module.exports = {
       res.status(200).json({
         status: true,
         message: "Success",
-        data: { pagination, dataAccount },
+        data: { pagination, dataAccounts },
       });
     } catch (error) {
       next(error);
