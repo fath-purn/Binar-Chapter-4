@@ -7,61 +7,69 @@ module.exports = {
     try {
       const { user_id, bank_name, bank_account_number, balance } = req.body;
 
-      // Validasi user_id
-      const user = await prisma.users.findUnique({
-        where: {
-          id: user_id,
-        },
-      });
+      try {
+        // Validasi user_id
+        const user = await prisma.users.findUnique({
+          where: {
+            id: user_id,
+          },
+        });
 
-      if (!user) {
-        return res.status(400).json({
+        if (!user) {
+          return res.status(400).json({
+            status: false,
+            message: "User tidak ditemukan",
+            data: null,
+          });
+        }
+
+        // Validasi balance
+        if (balance <= 0) {
+          return res.status(400).json({
+            status: false,
+            message: "Saldo tidak valid",
+            data: null,
+          });
+        }
+
+        // Validasi apakah pengguna sudah memiliki rekening bank dengan nomor rekening yang sama
+        const existingBankAccountCount = await prisma.bank_accounts.count({
+          where: {
+            bank_account_number,
+          },
+        });
+
+        if (existingBankAccountCount) {
+          return res.status(400).json({
+            status: false,
+            message:
+              "Pengguna sudah memiliki rekening bank dengan nomor rekening yang sama",
+            data: null,
+          });
+        }
+
+        const account = await prisma.bank_accounts.create({
+          data: {
+            user_id,
+            bank_name,
+            bank_account_number,
+            balance,
+          },
+        });
+        res.status(201).json({
+          status: true,
+          message: "Success Create Account",
+          data: account,
+        });
+      } catch (err) {
+        res.status(400).json({
           status: false,
-          message: "User tidak ditemukan", 
+          message: err.message,
           data: null,
         });
       }
-
-      // Validasi balance
-      if (balance <= 0) {
-        return res.status(400).json({
-          status: false,
-          message: "Saldo tidak valid",
-          data: null,
-        });
-      }
-
-      // Validasi apakah pengguna sudah memiliki rekening bank dengan nomor rekening yang sama
-      const existingBankAccountCount = await prisma.bank_accounts.count({
-        where: {
-          bank_account_number,
-        },
-      });
-
-      if (existingBankAccountCount) {
-        return res.status(400).json({
-          status: false,
-          message:
-            "Pengguna sudah memiliki rekening bank dengan nomor rekening yang sama",
-          data: null,
-        });
-      }
-
-      const account = await prisma.bank_accounts.create({
-        data: {
-          user_id,
-          bank_name,
-          bank_account_number,
-          balance,
-        },
-      });
-      res.status(201).json({
-        status: true,
-        message: "Success Create Account",
-        data: account,
-      });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
   getAllAccount: async (req, res, next) => {
@@ -70,24 +78,32 @@ module.exports = {
       page = Number(page);
       limit = Number(limit);
 
-      const dataAccounts = await prisma.bank_accounts.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-      });
+      try {
+        const dataAccounts = await prisma.bank_accounts.findMany({
+          skip: (page - 1) * limit,
+          take: limit,
+        });
 
-      const { _count } = await prisma.bank_accounts.aggregate({
-        _count: { id: true },
-      });
+        const { _count } = await prisma.bank_accounts.aggregate({
+          _count: { id: true },
+        });
 
-      const pagination = getPagination(req, res, _count.id, page, limit);
+        const pagination = getPagination(req, res, _count.id, page, limit);
 
-      res.status(200).json({
-        status: true,
-        message: "Success",
-        data: { pagination, dataAccounts },
-      });
-    } catch (error) {
-      next(error);
+        res.status(200).json({
+          status: true,
+          message: "Success",
+          data: { pagination, dataAccounts },
+        });
+      } catch (err) {
+        res.status(400).json({
+          status: false,
+          message: err.message,
+          data: null,
+        });
+      }
+    } catch (err) {
+      next(err);
     }
   },
   getAccountById: async (req, res, next) => {
@@ -95,27 +111,35 @@ module.exports = {
       let { id } = req.params;
       id = Number(id);
 
-      const account = await prisma.bank_accounts.findUnique({
-        where: {
-          id,
-        },
-      });
+      try {
+        const account = await prisma.bank_accounts.findUnique({
+          where: {
+            id,
+          },
+        });
 
-      if (!account) {
-        return res.status(400).json({
+        if (!account) {
+          return res.status(400).json({
+            status: false,
+            message: "Account not found",
+            data: null,
+          });
+        }
+
+        res.status(200).json({
+          status: true,
+          message: "Success",
+          data: account,
+        });
+      } catch (err) {
+        res.status(400).json({
           status: false,
-          message: "Account not found",
+          message: err.message,
           data: null,
         });
       }
-
-      res.status(200).json({
-        status: true,
-        message: "Success",
-        data: account,
-      });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 };
