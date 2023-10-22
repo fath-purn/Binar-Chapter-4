@@ -137,10 +137,10 @@ paths:
               properties:
                 email:
                   type: string
-                  default: "ab@mail.com"
+                  default: "mail@mail.com"
                 password:
                   type: string
-                  default: "asd@fsdf123"
+                  default: "123456"
       responses:
         '201':
           description: Created

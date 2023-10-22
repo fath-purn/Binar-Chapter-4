@@ -9,7 +9,7 @@ module.exports = {
   register: async (req, res, next) => {
     try {
       const { name, email, password, password_confirmation } = req.body;
-      if (password != password_confirmation) {
+      if (password !== password_confirmation) {
         return res.status(400).json({
           status: false,
           message: "Bad Request",
@@ -54,7 +54,7 @@ module.exports = {
         },
       });
 
-      res.status(200).json({
+      res.status(201).json({
         status: true,
         message: "Created",
         message: "Success",
@@ -100,7 +100,7 @@ module.exports = {
 
       let token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
 
-      return res.status(200).json({
+      return res.status(201).json({
         status: true,
         message: "OK",
         err: null,
@@ -192,7 +192,11 @@ module.exports = {
         data: user,
       });
     } catch (error) {
-      next(error);
+      return res.status(400).json({
+        status: false,
+        message: error,
+        data: null,
+      });
     }
   },
 };

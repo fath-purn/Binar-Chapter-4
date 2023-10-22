@@ -14,7 +14,7 @@ GET http://localhost:3000/api/v1/users/1
 POST http://localhost:3000/api/v1/auth/register
 Content-Type: application/json
 
-{
+{ 
     "name": "test",
     "email": "abc@mail.com",
     "password": "asd@fsdf123",
@@ -48,24 +48,25 @@ Content-Type: application/json
 
 ### 
 GET http://localhost:3000/api/v1/accounts?limit=5&page=2
- 
+  
 ###
 GET http://localhost:3000/api/v1/accounts/1
 
 
 ### Transaction
-POST http://localhost:3000/api/v1/transactions
+POST http://localhost:3000/api/v1/transaction
 Content-Type: application/json
 
 {
-    "source_account_id": ,
-    "destination_account_id": 1,
+    "source_account_id": 1,
+    "destination_account_id": 4,
     "amount": 100
 }
 
 ###
 GET http://localhost:3000/api/v1/transactions?limit=5&page=1
-
+ 
 ###
 GET http://localhost:3000/api/v1/transactions/10
 
+ 

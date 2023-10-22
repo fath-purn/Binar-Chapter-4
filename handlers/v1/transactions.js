@@ -12,6 +12,7 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Source account dan destination account tidak boleh sama",
+          data: null,
         });
       }
 
@@ -26,6 +27,7 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Source account tidak ditemukan",
+          data: null,
         });
       }
   
@@ -39,6 +41,7 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Destination account tidak ditemukan",
+          data: null,
         });
       }
   
@@ -47,6 +50,7 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Amount tidak valid",
+          data: null,
         });
       }
   
@@ -61,6 +65,7 @@ module.exports = {
         return res.status(400).json({
           status: false,
           message: "Pengguna tidak memiliki otorisasi untuk melakukan transaksi dari rekening bank asal",
+          data: null,
         });
       }
   
@@ -142,6 +147,15 @@ module.exports = {
           id: Number(id),
         },
       });
+
+      // d tidak ditemukan
+      if (!transaction) {
+        return res.status(400).json({
+          status: false,
+          message: "Transaction tidak ditemukan",
+          data: null,
+        });
+      }
 
       // Mendapatkan informasi akun asal
       const sourceAccount = await prisma.bank_accounts.findUnique({
