@@ -17,7 +17,6 @@ module.exports = {
         }
 
         authorization = authorization.replace('Bearer ', '');
-        console.log(authorization);
 
         jwt.verify(authorization, JWT_SECRET_KEY, async (err, decoded) => {
             if (err) {
