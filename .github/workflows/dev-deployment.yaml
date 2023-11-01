@@ -29,3 +29,9 @@ jobs:
         run: railway up --service ${{ secrets.RAILWAY_SERVICES_ID }}
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_DEVELOP_TOKEN }}
+
+      - name: Prisma Migrate
+        run: npx prisma migrate dev --name init --preview-feature
+        env:
+          DATABASE_URL: ${{ secrets.RAILWAY_DEV_DATABASE_URL }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_DEVELOP_TOKEN }}
